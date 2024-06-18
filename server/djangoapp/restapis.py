@@ -17,20 +17,21 @@ def get_request(endpoint, **kwargs):
         return None
 
 def analyze_review_sentiments(text):
-    request_url = f"{sentiment_analyzer_url}analyze/{text}"
+    request_url = sentiment_analyzer_url + "analyze/" + text
     try:
         response = requests.get(request_url)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
         print(f"Error during sentiment analysis request: {e}")
-        return None
+        return {"sentiment": "neutral"}  # default response in case of error
 
 def post_review(data_dict):
+    request_url = backend_url + "/insert_review"
     try:
-        response = requests.post(backend_url + "reviews", json=data_dict)
+        response = requests.post(request_url, json=data_dict)
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        print(f"Error during POST request: {e}")
+        print(f"Error during POST request to {request_url}: {e}")
         return None
